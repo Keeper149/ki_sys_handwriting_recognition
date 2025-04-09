@@ -63,5 +63,3 @@ python Tkinter_GUI.py
 
 (c) Thomas Ortner, written by ChatGPT
 ```
-
----
