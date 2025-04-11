@@ -5,6 +5,7 @@ import numpy as np
 import string
 import cv2
 import os
+from sklearn.model_selection import train_test_split
 
 def load_data(input_folder, size=(28, 28)):
     images = []
@@ -34,11 +35,10 @@ def predict_letters(model, x_test):
     return predicted_letters
 
 if __name__ == "__main__":
-    model = tf.keras.models.load_model("trained_handwriting_model.keras")
+    model = tf.keras.models.load_model("trained_handwriting_model_CNN.keras")
 
     x, y = load_data("BigDataSet")
     
-    from sklearn.model_selection import train_test_split
     _, x_test, _, y_test = train_test_split(x, y, test_size=0.1, random_state=42)
 
     predicted_letters = predict_letters(model, x_test)
