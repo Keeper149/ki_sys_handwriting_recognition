@@ -43,15 +43,25 @@ class DrawingApp:
         self.draw.ellipse([x-r, y-r, x+r, y+r], fill=0)
 
     def predict_drawing(self):
+        # Bild vorbereiten
         resized_image = self.image.resize((28, 28), Image.Resampling.LANCZOS)
-
         image_array = 1 - np.array(resized_image).astype(np.float32) / 255.0
         image_array = image_array.reshape(1, 28, 28)
 
-        prediction = model.predict(image_array)
-        letter = predict_letter(prediction[0])
+        # Modellvorhersage
+        prediction = model.predict(image_array)[0]
 
-        self.label_result.config(text=f"Erkannt: {letter}")
+        # Normierung auf Summe = 1, falls keine Softmax im Modell ist
+        if not np.isclose(np.sum(prediction), 1.0, atol=1e-3):
+            prediction = prediction / np.sum(prediction)
+
+        # Beste Vorhersage
+        index = np.argmax(prediction)
+        letter = chr(index + ord('A'))
+        probability = prediction[index] * 100
+
+        # Ausgabe im GUI
+        self.label_result.config(text=f"Erkannt: {letter} ({probability:.2f}%)")
 
     def clear_canvas(self):
         self.canvas.delete("all")
